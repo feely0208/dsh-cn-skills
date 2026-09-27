@@ -1,6 +1,6 @@
 # 发布说明
 
-三个包各自独立发布到 npm（`@deepwhale-cn` scope，public）。
+四个包各自独立发布到 npm（`@deepwhale-cn` scope，public）。
 
 ## 发布命令
 
@@ -8,9 +8,41 @@
 cd dsh-cn-compliance      && npm publish --access public
 cd dsh-cn-doc-formatter   && npm publish --access public
 cd dsh-release-selfcheck  && npm publish --access public
+cd dsh-cn-ai-labeling     && npm publish --access public
 ```
 
-改版本号后先 `npm pack --dry-run` 看一眼要发的内容（本项目实测：7 / 12 / 7 个文件）。
+改版本号后先 `npm pack --dry-run` 看一眼要发的内容（本项目实测：7 / 12 / 7 / 8 个文件）。
+
+## ⚠️ 发布不可逆（别指望"发错了删掉就行"）
+
+npm 官方文档 [npm-unpublish](https://docs.npmjs.com/cli/v10/commands/npm-unpublish) 原文：
+
+> Even if a package version is unpublished, that specific name and version
+> combination can never be reused. In order to publish the package again,
+> a new version number must be used.
+>
+> With the default registry (`registry.npmjs.org`), unpublish is only allowed
+> with versions published in the last **72 hours**.
+
+三条硬约束：
+
+1. **只有 72 小时内**能 unpublish，超过只能发邮件找 support@npmjs.com。
+2. **版本号永久烧掉** —— 发过 `0.1.0`，就永远不能再发一个不同的 `0.1.0`，只能 `0.1.1`。
+3. **整个包被撤下后，24 小时内不能再发新版本。**
+
+所以**发布前必须验证**，不能"先发再改"。发错了的正确做法是**发下一个版本去覆盖**（配合
+`npm deprecate` 提示旧版），而不是撤回。
+
+## ⚠️ 桌面端是从 npm 拉的，不是本地源码
+
+`dsh-desktop/scripts/build-bundled-plugins.js` 从 **npm 已发布的正式包**下载载荷，
+理由写在脚本注释里：发出去的应该是经过验证的发布制品，本地源码可能带着未发布的改动。
+
+推论：**改了 skill 内容，光提交源码不起作用** —— 必须发布新版本，
+再重跑 `node scripts/build-bundled-plugins.js`，桌面端才会带上新内容。
+
+该脚本的 `PLUGINS` 清单决定了哪些包随桌面端分发 —— **新增包要同时加进这个清单**，
+否则发布了也不会随包分发。
 
 ## ⚠️ npm 正在收紧凭据（两件事都要知道）
 
