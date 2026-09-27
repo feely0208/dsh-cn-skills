@@ -81,6 +81,9 @@ SITE_HOST=https://your-domain.example DOCS_DIRS="./docs:./README.md" bash <scan.
 
 ## 与其它插件的关系
 
+本插件只管**话** —— 对外文案里不能说什么。要逐条核对**产品实现**里 AI 生成内容标识
+有没有做进代码与导出物，用 [`@deepwhale-cn/dsh-cn-ai-labeling`](https://www.npmjs.com/package/@deepwhale-cn/dsh-cn-ai-labeling)。
+
 按 [DSH 插件生态倡议书](https://github.com/anywhere-labs/dsh-desktop/blob/main/docs/plugin-ecosystem.md)
 的三条原则开发：**组合优先、声明清晰、兼容优先**。不假设、不覆盖其它插件的内部实现。
 

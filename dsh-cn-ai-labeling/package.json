@@ -1,0 +1,58 @@
+{
+  "name": "@deepwhale-cn/dsh-cn-ai-labeling",
+  "version": "0.1.0",
+  "description": "AI 生成合成内容标识合规自检：对照《人工智能生成合成内容标识办法》与强制性国标 GB 45438—2025，逐条核对显式/隐式标识落实情况，并给出防误伤边界。",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "skill",
+    "compliance",
+    "china",
+    "合规",
+    "ai-labeling",
+    "aigc",
+    "gb-45438",
+    "gb45438",
+    "content-labeling",
+    "水印",
+    "元数据",
+    "生成式人工智能",
+    "深度合成",
+    "regulatory",
+    "chinese"
+  ],
+  "files": [
+    "lib",
+    "skill",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "dsh": ">=0.1.0-rc.6"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-skill": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feely0208/dsh-cn-skills.git",
+    "directory": "dsh-cn-ai-labeling"
+  },
+  "homepage": "https://github.com/feely0208/dsh-cn-skills#readme",
+  "bugs": {
+    "url": "https://github.com/feely0208/dsh-cn-skills/issues"
+  }
+}

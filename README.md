@@ -28,8 +28,9 @@ DSH 的插件生态里**绝大多数内容是英文的**，而面向中国大陆
 | [`@deepwhale-cn/dsh-cn-compliance`](./dsh-cn-compliance) | **话能不能说** —— 对外内容合规红线审核：网络工具用语、广告法极限词、绝对化承诺、内部文件公网暴露 | 改官网、写公开文档、发公众号、写 App 内文案时 |
 | [`@deepwhale-cn/dsh-cn-doc-formatter`](./dsh-cn-doc-formatter) | **公文怎么排** —— 按 GB/T 9704-2012 生成 `.docx` / `.pdf` / `.txt`，附输出自检 | 写公文、通知、报告时 |
 | [`@deepwhale-cn/dsh-release-selfcheck`](./dsh-release-selfcheck) | **东西对不对** —— 发布前自检：产物清单比对、版本一致性、架构正确性、上线前逐链接检查、发布纪律 | 发版、上传安装包、切换下载链接、创建 Release 时 |
+| [`@deepwhale-cn/dsh-cn-ai-labeling`](./dsh-cn-ai-labeling) | **AI 标识做没做** —— 对照《人工智能生成合成内容标识办法》与强制性国标 GB 45438—2025，核对显式/隐式标识、导出链路与上架材料 | 做 AI 产品、设计导出功能、准备上架应用市场时 |
 
-三者的边界是刻意分开的：**合规管"话"，自检管"东西"**，不能互相替代。
+四者的边界是刻意分开的：**合规管"话"，标识管"实现"，自检管"东西"**，不能互相替代。
 
 ---
 
@@ -38,7 +39,8 @@ DSH 的插件生态里**绝大多数内容是英文的**，而面向中国大陆
 ```bash
 npm install @deepwhale-cn/dsh-cn-compliance \
               @deepwhale-cn/dsh-cn-doc-formatter \
-              @deepwhale-cn/dsh-release-selfcheck
+              @deepwhale-cn/dsh-release-selfcheck \
+              @deepwhale-cn/dsh-cn-ai-labeling
 ```
 
 然后在 DSH profile 的 `package.json` 里把它们列为 bundle：
@@ -48,7 +50,8 @@ npm install @deepwhale-cn/dsh-cn-compliance \
   "dependencies": {
     "@deepwhale-cn/dsh-cn-compliance": "^0.1.1",
     "@deepwhale-cn/dsh-cn-doc-formatter": "^0.1.1",
-    "@deepwhale-cn/dsh-release-selfcheck": "^0.1.0"
+    "@deepwhale-cn/dsh-release-selfcheck": "^0.1.0",
+    "@deepwhale-cn/dsh-cn-ai-labeling": "^0.1.0"
   },
   "dsh": {
     "profile": {
@@ -57,7 +60,8 @@ npm install @deepwhale-cn/dsh-cn-compliance \
         "@deepseek-ai/dsh-web-app",
         "@deepwhale-cn/dsh-cn-compliance",
         "@deepwhale-cn/dsh-cn-doc-formatter",
-        "@deepwhale-cn/dsh-release-selfcheck"
+        "@deepwhale-cn/dsh-release-selfcheck",
+        "@deepwhale-cn/dsh-cn-ai-labeling"
       ]
     }
   }
@@ -114,6 +118,7 @@ npm install @deepwhale-cn/dsh-cn-compliance \
 - [dsh-cn-compliance](./dsh-cn-compliance/README.md) —— 对外内容合规红线审核
 - [dsh-cn-doc-formatter](./dsh-cn-doc-formatter/README.md) —— 中文公文排版
 - [dsh-release-selfcheck](./dsh-release-selfcheck/README.md) —— 发布前自检
+- [dsh-cn-ai-labeling](./dsh-cn-ai-labeling/README.md) —— AI 生成合成内容标识合规自检
 
 ---
 
@@ -137,6 +142,9 @@ A collection of **Chinese-market skills for [DeepSeek Harness](https://github.co
 - **`dsh-cn-doc-formatter`** — Chinese official document typesetting per GB/T 9704-2012
 - **`dsh-release-selfcheck`** — release preflight: artifact manifest diffing,
   version consistency, architecture verification, link checks, release discipline
+- **`dsh-cn-ai-labeling`** — AI-generated content labeling self-check against
+  China's mandatory national standard GB 45438—2025 (explicit/implicit labels,
+  file metadata format, export paths, app-store submission)
 
 The release preflight is domain-agnostic and useful for any project that ships
 build artifacts to multiple channels — its whole point is catching failures that
