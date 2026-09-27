@@ -1,0 +1,54 @@
+{
+  "name": "@deepwhale-cn/dsh-cn-compliance",
+  "version": "0.1.1",
+  "description": "中国大陆对外内容合规红线审核：扫描网络工具用语、广告法极限词、绝对化承诺、内部文件公网暴露，并给出修复原则。",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "skill",
+    "compliance",
+    "china",
+    "广告法",
+    "合规",
+    "advertising-law",
+    "censorship-check",
+    "content-review",
+    "gb",
+    "regulatory",
+    "chinese"
+  ],
+  "files": [
+    "lib",
+    "skill",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "dsh": ">=0.1.0-rc.6"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-skill": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feely0208/dsh-cn-skills.git",
+    "directory": "dsh-cn-compliance"
+  },
+  "homepage": "https://github.com/feely0208/dsh-cn-skills#readme",
+  "bugs": {
+    "url": "https://github.com/feely0208/dsh-cn-skills/issues"
+  }
+}

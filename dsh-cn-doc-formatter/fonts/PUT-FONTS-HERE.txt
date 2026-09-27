@@ -1,0 +1,27 @@
+把仿宋字体文件放进这个目录即可被自动识别（可选做法）。
+
+本插件不随包分发任何字体 —— 方正仿宋等是商业字体，其授权允许在文档中使用，
+但不允许再分发字体文件本身。
+
+推荐做法（优先级从高到低）：
+
+  1. 环境变量直接指定文件（最明确，不受文件名限制）
+       export DSH_CN_FANGSONG=/path/to/仿宋.ttf
+       export DSH_CN_FANGSONG_BOLD=/path/to/仿宋加粗.ttf   # 可选
+
+  2. 环境变量指定一个目录
+       export DSH_CN_FONT_DIR=~/my-fonts
+
+  3. 放进系统字体目录（推荐，一次装好处处可用）
+       macOS    ~/Library/Fonts/
+       Windows  C:\Windows\Fonts\
+       Linux    ~/.fonts/  或  ~/.local/share/fonts/
+
+  4. 放进本插件的这个 fonts/ 目录
+       ⚠️ 注意：npm 更新本插件时这个目录可能被覆盖，建议用方式 1 / 2 / 3。
+
+脚本可自动识别的文件名：
+     FangS-SC.ttf、simfang.ttf、FangSong.ttf、FangSong_GB2312.ttf、
+     STFangsong.ttf、FandolFang-Regular.otf、仿宋.ttf、仿宋_GB2312.ttf
+
+文件名不在上面的列表里也没关系 —— 用 DSH_CN_FANGSONG 显式指定即可。
