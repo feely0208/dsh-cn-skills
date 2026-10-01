@@ -1,0 +1,54 @@
+{
+  "name": "@deepwhale-cn/dsh-secret-scan",
+  "version": "0.1.0",
+  "description": "密钥与敏感信息扫描：提交前、发布前把代码里的 API Key、令牌、私钥、凭据文件、内部域名找出来 —— 输出默认打码，可作为 pre-commit / CI 卡口。",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "skill",
+    "secret-scan",
+    "credential",
+    "security",
+    "pre-commit",
+    "leak",
+    "api-key",
+    "token",
+    "private-key",
+    "devsecops",
+    "chinese"
+  ],
+  "files": [
+    "lib",
+    "skill",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "dsh": ">=0.1.0-rc.6"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-skill": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feely0208/dsh-cn-skills.git",
+    "directory": "dsh-secret-scan"
+  },
+  "homepage": "https://github.com/feely0208/dsh-cn-skills#readme",
+  "bugs": {
+    "url": "https://github.com/feely0208/dsh-cn-skills/issues"
+  }
+}

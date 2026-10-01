@@ -31,8 +31,9 @@ DSH 的插件生态里**绝大多数内容是英文的**，而面向中国大陆
 | [`@deepwhale-cn/dsh-cn-ai-labeling`](./dsh-cn-ai-labeling) | **AI 标识做没做** —— 对照《人工智能生成合成内容标识办法》与强制性国标 GB 45438—2025，核对显式/隐式标识、导出链路与上架材料 | 做 AI 产品、设计导出功能、准备上架应用市场时 |
 | [`@deepwhale-cn/dsh-cn-pipl-check`](./dsh-cn-pipl-check) | **说的和做的是否一致** —— 个人信息保护：权限最小必要、第三方 SDK 清单、用户权利入口（查阅/删除/注销/撤回）、敏感信息单独同意、数据出境 | 准备上架、改隐私政策、新增权限或 SDK 时 |
 | [`@deepwhale-cn/dsh-cn-appstore-preflight`](./dsh-cn-appstore-preflight) | **上架能不能过** —— 应用市场预检：App 备案、隐私政策可达性、权限使用场景说明、账号注销入口、未成年人保护、上架材料骨架 | 提交应用市场之前、被驳回后定位原因时 |
+| [`@deepwhale-cn/dsh-secret-scan`](./dsh-secret-scan) | **有没有把密钥交出去** —— 密钥与敏感信息扫描：云厂商 AK、令牌、私钥、凭据文件是否被 git 跟踪、内网 IP 与内部域名。**通用，不限中国** | 提交前、开源前、发布前、交接时 |
 
-这些包的边界是刻意分开的：**合规管「话」，标识管「AI 链路」，隐私对照管「说的和做的是否一致」，上架预检管「材料与流程」，自检管「东西」**，不能互相替代。
+这些包的边界是刻意分开的：**合规管「话」，标识管「AI 链路」，隐私对照管「说的和做的是否一致」，上架预检管「材料与流程」，密钥扫描管「有没有把凭据交出去」，自检管「东西」**，不能互相替代。
 
 ---
 
@@ -44,7 +45,8 @@ npm install @deepwhale-cn/dsh-cn-compliance \
               @deepwhale-cn/dsh-release-selfcheck \
               @deepwhale-cn/dsh-cn-ai-labeling \
               @deepwhale-cn/dsh-cn-pipl-check \
-              @deepwhale-cn/dsh-cn-appstore-preflight
+              @deepwhale-cn/dsh-cn-appstore-preflight \
+              @deepwhale-cn/dsh-secret-scan
 ```
 
 然后在 DSH profile 的 `package.json` 里把它们列为 bundle：
