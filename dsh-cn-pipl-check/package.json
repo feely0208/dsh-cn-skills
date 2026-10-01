@@ -1,0 +1,55 @@
+{
+  "name": "@deepwhale-cn/dsh-cn-pipl-check",
+  "version": "0.1.0",
+  "description": "个人信息保护合规：核对「隐私政策里承诺的」与「代码里真做的」是否一致 —— 权限、第三方 SDK、用户权利入口、敏感信息单独同意、数据跨境与留存。",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "skill",
+    "pipl",
+    "privacy",
+    "china",
+    "个人信息保护法",
+    "隐私政策",
+    "合规",
+    "appstore",
+    "permission-audit",
+    "sdk-inventory",
+    "data-compliance",
+    "chinese"
+  ],
+  "files": [
+    "lib",
+    "skill",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "dsh": ">=0.1.0-rc.6"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-skill": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feely0208/dsh-cn-skills.git",
+    "directory": "dsh-cn-pipl-check"
+  },
+  "homepage": "https://github.com/feely0208/dsh-cn-skills#readme",
+  "bugs": {
+    "url": "https://github.com/feely0208/dsh-cn-skills/issues"
+  }
+}
