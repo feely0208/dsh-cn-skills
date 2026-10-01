@@ -91,3 +91,34 @@ console.log(r ? '注册成功: '+r.name : '注册失败');
 
 npm 包里的 `repository.directory` 指向本仓库的对应子目录 —— 改代码请改仓库，
 不要把 `node_modules` 里的副本当成源码。
+
+---
+
+## ⚠️ 新包发布后，元数据会有几分钟读不到（实测 4–6 分钟）
+
+**现象**：`npm publish` 明确返回成功（`+ @deepwhale-cn/xxx@0.1.0`），但紧接着：
+
+- `npm view @deepwhale-cn/xxx` → **404**
+- `npm install @deepwhale-cn/xxx` → **404**
+- `curl https://registry.npmjs.org/@deepwhale-cn%2Fxxx` → **404**
+
+**这不是发布失败**，是 registry 读侧的传播延迟。2026-10-01 实测两次：
+
+| 包 | 首次可读 |
+| --- | --- |
+| `dsh-cn-pipl-check` | 约 4 分钟 |
+| `dsh-cn-appstore-preflight` | 约 5.5 分钟 |
+
+**怎么确认它到底发出去没有**（三个证据，按可靠性排序）：
+
+1. **再发一次** —— 若已发布，会报
+   `You cannot publish over the previously published versions: 0.1.0.`
+   出现这句 = 服务端确实已经收了。
+2. **直接取 tarball**（它比 packument 先可用）：
+   ```sh
+   curl -sI "https://registry.npmjs.org/@deepwhale-cn/<pkg>/-/<pkg>-0.1.0.tgz"
+   ```
+   200 且大小与本地 `npm pack` 一致 = 包内容在库里。
+3. 等 packument 变 200，再 `npm install` 复验。
+
+> 别看到 404 就重新发或升版本号 —— 那会白白烧掉一个版本号（npm 的版本号永久不可重用）。
