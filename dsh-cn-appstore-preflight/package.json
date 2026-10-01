@@ -1,0 +1,56 @@
+{
+  "name": "@deepwhale-cn/dsh-cn-appstore-preflight",
+  "version": "0.1.0",
+  "description": "国内应用市场上架预检：App 备案、隐私政策可达性、权限使用场景说明、账号注销入口、未成年人保护、第三方 SDK 清单 —— 从上架材料角度做一次体检，并生成材料清单骨架。",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "skill",
+    "appstore",
+    "china",
+    "上架",
+    "应用市场",
+    "备案",
+    "华为",
+    "小米",
+    "合规",
+    "preflight",
+    "mobile",
+    "android",
+    "review-checklist"
+  ],
+  "files": [
+    "lib",
+    "skill",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "dsh": ">=0.1.0-rc.6"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-skill": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feely0208/dsh-cn-skills.git",
+    "directory": "dsh-cn-appstore-preflight"
+  },
+  "homepage": "https://github.com/feely0208/dsh-cn-skills#readme",
+  "bugs": {
+    "url": "https://github.com/feely0208/dsh-cn-skills/issues"
+  }
+}
