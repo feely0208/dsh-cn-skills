@@ -37,9 +37,28 @@ def generate_txt(args):
 
     # 正文
     if args.body:
-        body_lines = args.body.strip().split('\n')
-        for line in body_lines:
-            line = line.strip()
+        for kind, payload in split_table_blocks(args.body):
+            if kind == 'table':
+                # 纯文本表格：按列宽对齐（中文字符按 2 宽计算）
+                ncol = max(len(r) for r in payload)
+                widths = [0] * ncol
+                for row in payload:
+                    for ci, c in enumerate(row):
+                        w = sum(2 if ord(ch) > 127 else 1 for ch in c)
+                        widths[ci] = max(widths[ci], w)
+
+                def pad(s, w):
+                    n = sum(2 if ord(ch) > 127 else 1 for ch in s)
+                    return s + ' ' * max(0, w - n)
+
+                for ri, row in enumerate(payload):
+                    cells = [pad(row[ci] if ci < len(row) else '', widths[ci]) for ci in range(ncol)]
+                    lines.append('  ' + '  '.join(cells).rstrip())
+                    if ri == 0:
+                        lines.append('  ' + '-' * (sum(widths) + 2 * (ncol - 1)))
+                lines.append('')
+                continue
+            line = payload.strip()
             if not line:
                 continue
             # 检测标题级别（与 docx/pdf 脚本保持一致的严格规则）
@@ -86,6 +105,45 @@ def is_heading(line):
             and line[1].isdigit() and line[2] == '）'):
         return True
     return False
+
+
+def _table_sep(line):
+    """markdown 表格的分隔行（|---|---|）。"""
+    import re as _re
+    return bool(_re.match(r'^\s*\|[\s:|-]+\|\s*$', line))
+
+
+def split_table_blocks(body):
+    """把正文切成 [('line', 文本) | ('table', [[单元格,…], …])]。
+
+    约定：**连续以 | 开头**的行视为一个 markdown 表格（含可选分隔行）。
+    这样 md_adapter 原样透传 md 表格时，下游就能渲染成真表格；
+    不在表格里的 | 行也照样按表格处理（旧行为是拍平，新行为更好）。
+    """
+    blocks, buf = [], []
+
+    def flush():
+        if not buf:
+            return
+        rows = []
+        for r in buf:
+            if _table_sep(r):
+                continue
+            cells = [c.strip() for c in r.strip().strip('|').split('|')]
+            if any(cells):
+                rows.append(cells)
+        if rows:
+            blocks.append(('table', rows))
+
+    for raw in body.split('\n'):
+        if raw.strip().startswith('|'):
+            buf.append(raw.rstrip())
+            continue
+        flush()
+        buf = []
+        blocks.append(('line', raw))
+    flush()
+    return blocks
 
 
 def main():

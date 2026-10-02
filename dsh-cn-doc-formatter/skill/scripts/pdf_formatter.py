@@ -330,8 +330,12 @@ def generate_pdf(args):
 
     # === 正文 ===
     if args.body:
-        for line in args.body.strip().split('\n'):
-            line = line.strip()
+        for kind, payload in split_table_blocks(args.body):
+            if kind == 'table':
+                story.append(make_table(payload, make_style, body_size, markup_text))
+                story.append(Spacer(1, body_leading * 0.5))
+                continue
+            line = payload.strip()
             if not line:
                 continue
             if is_level1_title(line):
@@ -379,6 +383,83 @@ def generate_pdf(args):
     doc.build(story, onFirstPage=on_page, onLaterPages=on_page)
     print(f'PDF 文档已生成: {filepath}')
     return filepath
+
+
+def _table_sep(line):
+    """markdown 表格的分隔行（|---|---|）。"""
+    import re as _re
+    return bool(_re.match(r'^\s*\|[\s:|-]+\|\s*$', line))
+
+
+def split_table_blocks(body):
+    """把正文切成 [('line', 文本) | ('table', [[单元格,…], …])]。
+
+    约定：**连续以 | 开头**的行视为一个 markdown 表格（含可选分隔行）。
+    这样 md_adapter 原样透传 md 表格时，下游就能渲染成真表格；
+    不在表格里的 | 行也照样按表格处理（旧行为是拍平，新行为更好）。
+    """
+    blocks, buf = [], []
+
+    def flush():
+        if not buf:
+            return
+        rows = []
+        for r in buf:
+            if _table_sep(r):
+                continue
+            cells = [c.strip() for c in r.strip().strip('|').split('|')]
+            if any(cells):
+                rows.append(cells)
+        if rows:
+            blocks.append(('table', rows))
+
+    for raw in body.split('\n'):
+        if raw.strip().startswith('|'):
+            buf.append(raw.rstrip())
+            continue
+        flush()
+        buf = []
+        blocks.append(('line', raw))
+    flush()
+    return blocks
+
+
+def make_table(rows, make_style, body_size, markup_text):
+    """把二维数组渲染成**真 PDF 表格**（可跨页、带边框、表头加粗效果）。"""
+    from reportlab.platypus import Table, TableStyle
+    from reportlab.lib import colors
+    from reportlab.lib.units import cm
+
+    if not rows:
+        return Spacer(1, 1)
+    ncol = max(len(r) for r in rows)
+    # 列宽按内容长度加权（越长的列越宽），避免窄列挤成一团
+    weights = []
+    for ci in range(ncol):
+        w = max((len(r[ci]) for r in rows if ci < len(r)), default=4)
+        weights.append(max(w, 5))
+    total = float(sum(weights))
+    avail = A4[0] - 2.8 * cm - 2.6 * cm
+    widths = [avail * w / total for w in weights]
+
+    cell_style = make_style(FONTS['body'], 9.5, TA_JUSTIFY, leading=13)
+    data = []
+    for ri, row in enumerate(rows):
+        cells = []
+        for ci in range(ncol):
+            txt = row[ci] if ci < len(row) else ''
+            cells.append(Paragraph(markup_text(txt), cell_style))
+        data.append(cells)
+    t = Table(data, colWidths=widths, repeatRows=1)
+    t.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.4, colors.HexColor('#9aa3ad')),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 4),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+        ('TOPPADDING', (0, 0), (-1, -1), 3),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+    ]))
+    return t
 
 
 def main():

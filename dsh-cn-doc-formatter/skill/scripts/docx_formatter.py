@@ -443,8 +443,11 @@ def generate_docx(args):
         add_title(doc, args.title)
 
     if args.body:
-        for line in args.body.strip().split('\n'):
-            line = line.strip()
+        for kind, payload in split_table_blocks(args.body):
+            if kind == 'table':
+                add_table(doc, payload)
+                continue
+            line = payload.strip()
             if not line:
                 continue
             if is_level1_title(line):
@@ -474,6 +477,91 @@ def generate_docx(args):
     doc.save(filepath)
     print(f'Word 文档已生成: {filepath}')
     return filepath
+
+
+def _table_sep(line):
+    """markdown 表格的分隔行（|---|---|）。"""
+    import re as _re
+    return bool(_re.match(r'^\s*\|[\s:|-]+\|\s*$', line))
+
+
+def split_table_blocks(body):
+    """把正文切成 [('line', 文本) | ('table', [[单元格,…], …])]。
+
+    约定：**连续以 | 开头**的行视为一个 markdown 表格（含可选分隔行）。
+    这样 md_adapter 原样透传 md 表格时，下游就能渲染成真表格；
+    不在表格里的 | 行也照样按表格处理（旧行为是拍平，新行为更好）。
+    """
+    blocks, buf = [], []
+
+    def flush():
+        if not buf:
+            return
+        rows = []
+        for r in buf:
+            if _table_sep(r):
+                continue
+            cells = [c.strip() for c in r.strip().strip('|').split('|')]
+            if any(cells):
+                rows.append(cells)
+        if rows:
+            blocks.append(('table', rows))
+
+    for raw in body.split('\n'):
+        if raw.strip().startswith('|'):
+            buf.append(raw.rstrip())
+            continue
+        flush()
+        buf = []
+        blocks.append(('line', raw))
+    flush()
+    return blocks
+
+
+def add_table(doc, rows):
+    """把二维数组渲染成**真 Word 表格**（带边框、仿宋、五号 10.5pt、表头加粗）。
+
+    与全文风格一致：字体用同一个仿宋族（CN_FONT），行距用固定值保持紧凑。
+    单元格里换行会出现孤立标点的问题由上游 md_adapter 负责合并。
+    """
+    from docx.enum.table import WD_TABLE_ALIGNMENT
+    from docx.shared import Pt
+    from docx.oxml.ns import qn
+    from docx.oxml import OxmlElement
+    from docx.enum.text import WD_LINE_SPACING
+
+    if not rows:
+        return
+    ncol = max(len(r) for r in rows)
+    table = doc.add_table(rows=0, cols=ncol)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    for ri, row in enumerate(rows):
+        cells = table.add_row().cells
+        for ci in range(ncol):
+            txt = row[ci] if ci < len(row) else ''
+            cell = cells[ci]
+            cell.text = ''
+            p = cell.paragraphs[0]
+            p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.EXACTLY
+            p.paragraph_format.line_spacing = Pt(16)
+            run = p.add_run(txt)
+            run.font.name = CN_FONT
+            run.font.size = Pt(10.5)
+            run.bold = (ri == 0)
+            try:
+                run._element.rPr.rFonts.set(qn('w:eastAsia'), CN_FONT)
+            except Exception:
+                pass
+            tcPr = cell._tc.get_or_add_tcPr()
+            borders = OxmlElement('w:tcBorders')
+            for edge in ('top', 'left', 'bottom', 'right'):
+                el = OxmlElement('w:' + edge)
+                el.set(qn('w:val'), 'single')
+                el.set(qn('w:sz'), '6')
+                el.set(qn('w:color'), '808080')
+                borders.append(el)
+            tcPr.append(borders)
+    add_body_text(doc, '')
 
 
 def main():

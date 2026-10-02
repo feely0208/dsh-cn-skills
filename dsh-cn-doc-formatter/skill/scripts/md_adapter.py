@@ -101,37 +101,12 @@ def md_to_body(md: str, drop_meta: bool = False) -> str:
         nonlocal table_rows
         if not table_rows:
             return
-        rows = [r for r in table_rows
-                if not re.match(r'^\s*\|[\s:|-]+\|\s*$', r)]
+        # ── 表格：**原样保留**（markdown 管道形式）──────────────────────
+        # 原来这里把表格拍平成「表头：值；表头：值。」—— 那是本 skill 早期没有
+        # 表格支持时的权宜做法。2026-10-02 起 docx / pdf / txt 三个 formatter
+        # 都会把连续 | 行渲染成**真表格**，所以这里透传即可（拍平反而丢信息）。
+        out.extend(table_rows)
         table_rows = []
-        if not rows:
-            return
-        cells = [[c.strip() for c in r.strip().strip('|').split('|')] for r in rows]
-        head = cells[0]
-        generic = {'#', '序号', '编号'}
-        for row in cells[1:]:
-            if not any(row):
-                continue
-            # 两列表：左列即键（如「项 / 内容」表里的 运营主体、官网 …）
-            if len(row) == 2:
-                k, v = clean_inline(row[0]), clean_inline(row[1])
-                if k and v:
-                    out.append(f'　　{k}：{v}。')
-                elif v:
-                    out.append('　　' + v + '。')
-                continue
-            # 多列表：表头属于 generic 的整列跳过，其余用「表头：值」
-            parts = []
-            for i, c in enumerate(row):
-                if not c:
-                    continue
-                key = (head[i] if i < len(head) else '').strip()
-                if key in generic:
-                    continue
-                val = clean_inline(c)
-                parts.append(f'{clean_inline(key)}：{val}' if key else val)
-            if parts:
-                out.append('　　' + '；'.join(parts) + '。')
 
     for raw in lines:
         line = raw.rstrip()
